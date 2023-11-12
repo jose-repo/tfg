@@ -1,4 +1,4 @@
-package com.udima.tfg.tfg;
+package com.udima.tfg;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

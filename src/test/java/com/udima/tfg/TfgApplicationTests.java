@@ -1,4 +1,4 @@
-package com.udima.tfg.tfg;
+package com.udima.tfg;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
