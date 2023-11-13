@@ -16,9 +16,6 @@ public class TfgApplication {
 
 	public static void main(String[] args) throws MalformedURLException, JsonProcessingException {
 		SpringApplication.run(TfgApplication.class, args);
-		String strOperacionesDisponibles = Util.stream(new URL(Constants.INE_OPERACIONES_DISPONIBLES));
-		ObjectMapper objectMapper = new ObjectMapper();
-		List<OperacionesDisponibles> od = objectMapper.readValue(strOperacionesDisponibles, objectMapper.getTypeFactory().constructCollectionType(List.class, OperacionesDisponibles.class));
 	}
 
 }
