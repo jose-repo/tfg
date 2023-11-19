@@ -21,7 +21,7 @@ private newLabel? = 'Despoblación';
       {
         data: [1100000,1100000, 1090000,1090000, 1080000, 1070000, 1070000, 1060000, 1060000],
         label: 'Población',
-        backgroundColor: 'rgba(148,159,177,0.2)',
+        backgroundColor: 'rgba(19,34,54,0.6)',
         borderColor: 'rgba(148,159,177,1)',
         pointBackgroundColor: 'rgba(148,159,177,1)',
         pointBorderColor: '#fff',

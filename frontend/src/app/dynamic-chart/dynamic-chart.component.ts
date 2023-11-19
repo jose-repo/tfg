@@ -37,19 +37,20 @@ export class DynamicChartComponent {
     '2010',
     '2011',
     '2012',
+    '2013',
   ];
   public barChartType: ChartType = 'bar';
 
   public barChartData: ChartData<'bar'> = {
     labels: this.barChartLabels,
     datasets: [
-      { data: [0, 1, 1, 0, 0, 0, 0], label: 'Bajo', backgroundColor: [
+      { data: [1, 1, 1, 0, 0, 0, 0, 0], label: 'Bajo', backgroundColor: [
                                                                       'rgb(60, 179, 113, 0.2)',
                                                                     ],},
-      { data: [2, 0, 0, 2, 2, 0, 0], label: 'Medio', backgroundColor: [
+      { data: [0, 0, 0, 2, 2, 3, 0, 0], label: 'Medio', backgroundColor: [
                                                                       'rgb(255, 165, 0, 0.2)',
                                                                     ],},
-      { data: [0, 0, 0, 0, 0, 3, 4], label: 'Alto', backgroundColor: [
+      { data: [0, 0, 0, 0, 0, 0, 4, 5], label: 'Alto', backgroundColor: [
                                                                       'rgba(255, 99, 132, 0.2)',                                                          ],},
     ],
   };

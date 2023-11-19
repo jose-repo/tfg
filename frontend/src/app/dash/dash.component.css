@@ -20,3 +20,7 @@
   text-align: center;
   color: #132236;
 }
+
+h1, .mat-mdc-card-title {
+    color: #132236;
+}
