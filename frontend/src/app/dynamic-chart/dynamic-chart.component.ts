@@ -20,7 +20,9 @@ export class DynamicChartComponent {
     scales: {
       x: {},
       y: {
-        min: 10,
+      ticks: {stepSize: 1},
+        min: 0,
+        max: 5,
       },
     },
     plugins: {
@@ -41,8 +43,14 @@ export class DynamicChartComponent {
   public barChartData: ChartData<'bar'> = {
     labels: this.barChartLabels,
     datasets: [
-      { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
-      { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' },
+      { data: [0, 1, 1, 0, 0, 0, 0], label: 'Bajo', backgroundColor: [
+                                                                      'rgb(60, 179, 113, 0.2)',
+                                                                    ],},
+      { data: [2, 0, 0, 2, 2, 0, 0], label: 'Medio', backgroundColor: [
+                                                                      'rgb(255, 165, 0, 0.2)',
+                                                                    ],},
+      { data: [0, 0, 0, 0, 0, 3, 4], label: 'Alto', backgroundColor: [
+                                                                      'rgba(255, 99, 132, 0.2)',                                                          ],},
     ],
   };
 

@@ -10,12 +10,12 @@ export class BubbleChartCComponent {
 public bubbleChartOptions: ChartConfiguration['options'] = {
     scales: {
       x: {
-        min: 1998,
-        max: 2024,
+        min: 1990,
+        max: 2020,
         ticks: {},
       },
       y: {
-        min: 100,
+        min: 4000,
         max: 0,
         ticks: {},
       },
@@ -29,16 +29,19 @@ public bubbleChartOptions: ChartConfiguration['options'] = {
     datasets: [
       {
         data: [
-          { x: 1998, y:18 , r: 4},
-          { x: 2005, y:18 , r: 4},
-          { x: 2010, y:18 , r: 4},
-          { x: 2015, y:18 , r: 4},
-          { x: 2020, y:18 , r: 4},
-          { x: 2024, y:18 , r: 4},
+          { x: 1990, y:18 , r: 6},
+          { x: 1995, y:20 , r: 8},
+          { x: 2000, y:22 , r: 10},
+          { x: 2005, y:24 , r: 11},
+          { x: 2010, y:18 , r: 12},
+          { x: 2015, y:18 , r: 13},
+          { x: 2020, y:18 , r: 13},
         ],
-        label: 'Series A',
+        label: 'Riesgo Medio',
         backgroundColor: [
-          'green',
+                    'red',
+                    'green',
+                    'orange',
         ],
         borderColor: 'blue',
         hoverBackgroundColor: 'purple',

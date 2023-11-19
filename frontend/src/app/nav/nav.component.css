@@ -15,3 +15,36 @@
   top: 0;
   z-index: 1;
 }
+
+.mat-sidenav-fixed {
+    background-color: #132236;
+}
+
+mat-nav-list span {
+    color: white;
+    font-weight: bold;
+    padding:10px;
+    cursor:pointer;
+}
+
+mat-nav-list mat-nav-list span {
+    padding-left:15px;
+}
+
+.mat-toolbar-single-row {
+    font-size: 50px;
+    color: white;
+    padding-bottom: 19px;
+}
+
+.mat-drawer-container {
+    margin-top: -86px;
+}
+
+div.grid-container > h1 {
+    color: #132236;
+}
+
+span.mdc-list-item__content {
+    padding: 10px;
+}

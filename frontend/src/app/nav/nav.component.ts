@@ -11,8 +11,8 @@ import { AsyncPipe, NgIf } from '@angular/common';
 })
 export class NavComponent {
   private breakpointObserver = inject(BreakpointObserver);
-  menuItems = ['Comunidad de Madrid', 'Extremadura'];
-  municipios = ['Madrid', 'Getafe', 'Alcobendas', 'Pozuelo de Alarcón'];
+  menuItems = ['Extremadura'];
+  municipios = ['Cáceres', 'Badajoz'];
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),

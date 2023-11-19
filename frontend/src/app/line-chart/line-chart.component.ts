@@ -10,7 +10,7 @@ import Annotation from 'chartjs-plugin-annotation';
   styleUrls: ['./line-chart.component.css']
 })
 export class LineChartComponent {
-private newLabel? = 'New label';
+private newLabel? = 'Despoblación';
 
   constructor() {
     Chart.register(Annotation);
@@ -19,7 +19,7 @@ private newLabel? = 'New label';
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [5000000, 5100000, 5200000, 5300000, 5400000, 5500000, 5600000],
+        data: [1100000,1100000, 1090000,1090000, 1080000, 1070000, 1070000, 1060000, 1060000],
         label: 'Población',
         backgroundColor: 'rgba(148,159,177,0.2)',
         borderColor: 'rgba(148,159,177,1)',
@@ -30,7 +30,7 @@ private newLabel? = 'New label';
         fill: 'origin',
       }
     ],
-    labels: ['2023', '2024', '2025', '2026', '2027', '2028', '2029'],
+    labels: ['2006', '2007', '2008', '2009', '2010', '2011', '2012'],
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -62,7 +62,7 @@ private newLabel? = 'New label';
           {
             type: 'line',
             scaleID: 'x',
-            value: 'March',
+            value: '',
             borderColor: 'orange',
             borderWidth: 2,
             label: {
