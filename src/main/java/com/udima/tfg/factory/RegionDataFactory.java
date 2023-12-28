@@ -6,6 +6,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
+/**
+ * The RegionDataFactory class is responsible for creating RegionData objects from PopulationData objects.
+ * It implements the PopulationDataFactory interface.
+ */
 @Component
 public class RegionDataFactory<RegionData>
     implements PopulationDataFactory<com.udima.tfg.model.RegionData> {

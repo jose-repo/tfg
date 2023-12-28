@@ -6,6 +6,11 @@ import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
+/**
+ * The FederalStateDataFactory class is responsible for creating FederalStateData objects based on PopulationData objects.
+ *
+ * @param <FederalStateData> the type of FederalStateData object to create
+ */
 @Component
 public class FederalStateDataFactory<FederalStateData>
     implements PopulationDataFactory<com.udima.tfg.model.FederalStateData> {

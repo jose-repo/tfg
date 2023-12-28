@@ -12,6 +12,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a repository for population data.
+ * It provides methods to retrieve population data by regions or federal states.
+ */
 @Repository
 public class PopulationDataRepository {
     public List<PopulationData> findPopulationByRegions() throws MalformedURLException {

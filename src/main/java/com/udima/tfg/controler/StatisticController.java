@@ -17,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The StatisticController class is a REST controller that handles requests related to population statistics.
+ */
 @RestController
 public class StatisticController {
 

@@ -35,6 +35,12 @@ public class PopulationService {
     return List.of(StatisticData.builder().federalStateDataList(federalStateDataList).build());
   }
 
+  /**
+   * Converts the given list of PopulationData into a list of FederalStateData.
+   *
+   * @param populationDataList The list of PopulationData to convert.
+   * @return The list of FederalStateData converted from the PopulationData.
+   */
   private List<FederalStateData> convertToFederalStateData(
       @NotNull List<PopulationData> populationDataList) {
     return populationDataList.stream()
@@ -44,6 +50,13 @@ public class PopulationService {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Converts the given list of PopulationData into a list of RegionData based on the specified FederalStateData.
+   *
+   * @param federalStateData           The FederalStateData used to filter the PopulationData.
+   * @param populationRegionDataList   The list of PopulationData to convert.
+   * @return The list of RegionData converted from the PopulationData.
+   */
   private List<RegionData> convertToRegionData(
       FederalStateData federalStateData, @NotNull List<PopulationData> populationRegionDataList) {
     List<RegionExtension.RegionExtensionEnum> regionsToFind =
@@ -70,6 +83,11 @@ public class PopulationService {
     return regionDataResult;
   }
 
+  /**
+   * Calculates the depopulation value for each data in the given FederalStateData.
+   *
+   * @param federalStateData The FederalStateData containing the data to calculate the depopulation value for.
+   */
   private void calculateDepopulationValue(FederalStateData federalStateData) {
     federalStateData.getData()
               .forEach(
@@ -80,6 +98,11 @@ public class PopulationService {
                   });
   }
 
+  /**
+   * Calculates the depopulation value for each data in the given RegionData.
+   *
+   * @param regionData The RegionData containing the data to calculate the depopulation value for.
+   */
   private void calculateDepopulationValue(RegionData regionData) {
     regionData.getData()
             .forEach(
@@ -90,6 +113,12 @@ public class PopulationService {
                     });
   }
 
+  /**
+   * Calculates the risk index for the given data based on the depopulation value.
+   *
+   * @param data The data for which the risk index is to be calculated.
+   * @param depopulationValue The depopulation value used to determine the risk index.
+   */
   private void calculateRiskIndex(Data data, double depopulationValue) {
     if (depopulationValue < 12.5) {
       data.setRiskLevel(RiskLevel.RiskLevelEnum.EXTREM.level);
