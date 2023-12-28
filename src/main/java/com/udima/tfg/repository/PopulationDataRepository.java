@@ -3,14 +3,18 @@ package com.udima.tfg.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udima.tfg.core.Constants;
+import com.udima.tfg.model.Data;
 import com.udima.tfg.model.PopulationData;
 import com.udima.tfg.utils.Util;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.stereotype.Repository;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a repository for population data.
@@ -27,6 +31,7 @@ public class PopulationDataRepository {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    od.forEach(populationData -> populationData.setData(populationData.data.stream().sorted(Comparator.comparingInt(Data::getAnyo)).collect(Collectors.toList())));
         return od;
     }
     
@@ -39,6 +44,7 @@ public class PopulationDataRepository {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        od.forEach(populationData -> populationData.setData(populationData.data.stream().sorted(Comparator.comparingInt(Data::getAnyo)).collect(Collectors.toList())));
         return od;
     }
 }

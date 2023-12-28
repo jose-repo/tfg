@@ -13,6 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The PopulationService class is responsible for processing population data
+ * and generating statistics.
+ */
 @Service
 public class PopulationService {
   @Autowired private PopulationDataFactory<FederalStateData> federalStateFactory;
@@ -32,6 +36,7 @@ public class PopulationService {
           federalStateData.setRegionDataList(
               convertToRegionData(federalStateData, populationRegionDataList));
         });
+    
     return List.of(StatisticData.builder().federalStateDataList(federalStateDataList).build());
   }
 

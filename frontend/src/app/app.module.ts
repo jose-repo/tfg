@@ -20,6 +20,8 @@ import { LineChartComponent } from './line-chart/line-chart.component';
 import { DynamicChartComponent } from './dynamic-chart/dynamic-chart.component';
 import { DoughnutChartComponent } from './doughnut-chart/doughnut-chart.component';
 import { BubbleChartCComponent } from './bubble-chart-c/bubble-chart-c.component';
+import {HttpClientModule} from "@angular/common/http";
+import {statisticResolver} from "./services/statistic.resolver";
 
 @NgModule({
   declarations: [
@@ -44,9 +46,10 @@ import { BubbleChartCComponent } from './bubble-chart-c/bubble-chart-c.component
     MatGridListModule,
     MatCardModule,
     MatMenuModule,
-    NgChartsModule
+    NgChartsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [statisticResolver],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

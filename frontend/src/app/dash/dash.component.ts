@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
-import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import {StatisticService} from "../services/statistic.service";
+import {Statistic} from "../model/Entities";
 
 @Component({
   selector: 'app-dash',
@@ -10,6 +10,11 @@ import { BaseChartDirective } from 'ng2-charts';
   styleUrls: ['./dash.component.css']
 })
 export class DashComponent {
+  constructor(private service: StatisticService) {
+  }
+
+  public statisticData: Statistic[] =[] ;
+
   private breakpointObserver = inject(BreakpointObserver);
   /** Based on the screen size, switch from standard to one column per row */
   cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(

@@ -1,8 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
-import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {Chart, ChartConfiguration, ChartEvent, ChartType} from 'chart.js';
+import {BaseChartDirective} from 'ng2-charts';
 
 import Annotation from 'chartjs-plugin-annotation';
+import {StatisticService} from "../services/statistic.service";
+import {Statistic} from "../model/Entities";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-line-chart',
@@ -10,16 +13,54 @@ import Annotation from 'chartjs-plugin-annotation';
   styleUrls: ['./line-chart.component.css']
 })
 export class LineChartComponent {
-private newLabel? = 'Despoblación';
-
-  constructor() {
+  constructor(private service: StatisticService, private route: ActivatedRoute) {
     Chart.register(Annotation);
+  }
+  public statisticData: Statistic[] =[] ;
+  private newLabel? = 'Despoblación';
+
+  getLineChartData(): number[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: number[] = [];
+    // @ts-ignore
+      for (let item of this.statisticData) {
+        //console.log(item);
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.Data.forEach(federalStateData => {
+            if (federalState.federalStatesExtensionEnum == "ANDALUCIA") {
+              dataArr.push(federalStateData.Valor)
+            }
+          }));
+      }
+    return dataArr;
+
+  }
+
+  getLineChartYears(): string[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: string[] = [];
+    // @ts-ignore
+      for (let item of this.statisticData) {
+        //console.log(item);
+        // @ts-ignore
+        item.federalStateDataList.forEach(federalState =>
+          // @ts-ignore
+          federalState.Data.forEach(federalStateData => {
+            if (federalState.federalStatesExtensionEnum == "ANDALUCIA") {
+              dataArr.push("" + federalStateData.Anyo + "");
+            }
+          }));
+      }
+    return dataArr;
   }
 
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [1100000,1100000, 1090000,1090000, 1080000, 1070000, 1070000, 1060000, 1060000],
+        data: this.getLineChartData(),
+        //data: [12222, 12222, 1222212222, 122221222212222],
         label: 'Población',
         backgroundColor: 'rgba(19,34,54,0.6)',
         borderColor: 'rgba(148,159,177,1)',
@@ -30,7 +71,8 @@ private newLabel? = 'Despoblación';
         fill: 'origin',
       }
     ],
-    labels: ['2006', '2007', '2008', '2009', '2010', '2011', '2012'],
+    labels: this.getLineChartYears(),
+    //labels: ['2010','2020', '2030', '2040','2010','2020', '2030', '2040', '2010','2020', '2030', '2040', '2010','2020', '2030', '2040','2010','2020', '2030', '2040','2010','2020', '2030', '2040', '2010','2020', '2030', '2040', '2010','2020', '2030', '2040']
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -56,7 +98,7 @@ private newLabel? = 'Despoblación';
     },
 
     plugins: {
-      legend: { display: true },
+      legend: {display: true},
       annotation: {
         annotations: [
           {
@@ -100,9 +142,9 @@ private newLabel? = 'Despoblación';
 
   // events
   public chartClicked({
-    event,
-    active,
-  }: {
+                        event,
+                        active,
+                      }: {
     event?: ChartEvent;
     active?: object[];
   }): void {
@@ -110,9 +152,9 @@ private newLabel? = 'Despoblación';
   }
 
   public chartHovered({
-    event,
-    active,
-  }: {
+                        event,
+                        active,
+                      }: {
     event?: ChartEvent;
     active?: object[];
   }): void {
