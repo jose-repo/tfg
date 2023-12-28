@@ -3,7 +3,7 @@ package com.udima.tfg.core;
 public class FederalStatesExtension {
     public enum FederalStatesExtensionEnum {
         ANDALUCIA(87599, "01"),
-        ARAGON(47/20, "02"),
+        ARAGON(47720, "02"),
         ASTURIAS(10640, "03"),
         BALEARES(4992, "04"),
         CANARIAS(7447, "05"),

@@ -1,12 +1,11 @@
 package com.udima.tfg.model;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -17,7 +16,14 @@ import java.util.Map;
         "MetaData",
         "Data"
 })
+@Getter
+@Setter
+@AllArgsConstructor
 public class PopulationData {
+
+    public PopulationData() {
+
+    }
 
     @JsonProperty("COD")
     public String cod;
@@ -32,7 +38,7 @@ public class PopulationData {
     @JsonProperty("Data")
     public List<Data> data;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private Map<String, Object> additionalProperties;
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
