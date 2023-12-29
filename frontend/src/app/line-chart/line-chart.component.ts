@@ -1,11 +1,12 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Chart, ChartConfiguration, ChartEvent, ChartType} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 
 import Annotation from 'chartjs-plugin-annotation';
-import {StatisticService} from "../services/statistic.service";
 import {Statistic} from "../model/Entities";
 import {ActivatedRoute} from "@angular/router";
+import _default from "chart.js/dist/core/core.interaction";
+import dataset = _default.modes.dataset;
 
 @Component({
   selector: 'app-line-chart',
@@ -13,11 +14,32 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./line-chart.component.css']
 })
 export class LineChartComponent {
-  constructor(private service: StatisticService, private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute) {
     Chart.register(Annotation);
+    this.route.params.subscribe(routeParams => {
+      this.name = this.route.snapshot.params['id'];
+      this.chart?.update();
+      this.lineChartData = {
+        datasets: [
+          {
+            data: this.getLineChartData(),
+            label: 'Población',
+            backgroundColor: 'rgba(19,34,54,0.6)',
+            borderColor: 'rgba(148,159,177,1)',
+            pointBackgroundColor: 'rgba(148,159,177,1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+            fill: 'origin',
+          }
+        ],
+        labels: this.getLineChartYears()
+      }
+    });
   }
   public statisticData: Statistic[] =[] ;
   private newLabel? = 'Despoblación';
+  public name: string | undefined;
 
   getLineChartData(): number[] {
     this.statisticData = this.route.snapshot.data['statisticResolver'];
@@ -28,11 +50,27 @@ export class LineChartComponent {
         item.federalStateDataList?.forEach(federalState =>
           // @ts-ignore
           federalState.Data.forEach(federalStateData => {
-            if (federalState.federalStatesExtensionEnum == "ANDALUCIA") {
+            if (federalState.federalStatesExtensionEnum == this.name) {
               dataArr.push(federalStateData.Valor)
             }
           }));
       }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+            federalState.regionDataList?.forEach(region =>
+            {
+              // @ts-ignore
+              if (region.MetaData[0].Nombre == this.name) {
+                region?.Data?.forEach(data => {
+                  dataArr.push(data.Valor)
+                })
+              }
+          }));
+      }
+    }
     return dataArr;
 
   }
@@ -58,7 +96,6 @@ export class LineChartComponent {
     datasets: [
       {
         data: this.getLineChartData(),
-        //data: [12222, 12222, 1222212222, 122221222212222],
         label: 'Población',
         backgroundColor: 'rgba(19,34,54,0.6)',
         borderColor: 'rgba(148,159,177,1)',
@@ -70,7 +107,6 @@ export class LineChartComponent {
       }
     ],
     labels: this.getLineChartYears(),
-    //labels: ['2010','2020', '2030', '2040','2010','2020', '2030', '2040', '2010','2020', '2030', '2040', '2010','2020', '2030', '2040','2010','2020', '2030', '2040','2010','2020', '2030', '2040', '2010','2020', '2030', '2040', '2010','2020', '2030', '2040']
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {

@@ -3,6 +3,7 @@ import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import {StatisticService} from "../services/statistic.service";
 import {Statistic} from "../model/Entities";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-dash',
@@ -10,10 +11,18 @@ import {Statistic} from "../model/Entities";
   styleUrls: ['./dash.component.css']
 })
 export class DashComponent {
-  constructor(private service: StatisticService) {
+  constructor(private service: StatisticService, private route: ActivatedRoute) {
+    this.route.params.subscribe(routeParams => {
+      this.currentAreaStr = this.route.snapshot.params['id'];
+    });
   }
 
   public statisticData: Statistic[] =[] ;
+  public currentAreaStr: string = this.route.snapshot.params['id'];
+
+
+
+
 
   private breakpointObserver = inject(BreakpointObserver);
   /** Based on the screen size, switch from standard to one column per row */

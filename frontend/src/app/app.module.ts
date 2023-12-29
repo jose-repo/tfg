@@ -20,31 +20,38 @@ import { LineChartComponent } from './line-chart/line-chart.component';
 import { DynamicChartComponent } from './dynamic-chart/dynamic-chart.component';
 import {HttpClientModule} from "@angular/common/http";
 import {statisticResolver} from "./services/statistic.resolver";
+import { LoginComponent } from './login/login.component';
+import {ReactiveFormsModule} from "@angular/forms";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
     NavComponent,
     DashComponent,
     CardComponent,
     LineChartComponent,
     DynamicChartComponent,
+    LoginComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatListModule,
-    MatGridListModule,
-    MatCardModule,
-    MatMenuModule,
-    NgChartsModule,
-    HttpClientModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSidenavModule,
+        MatIconModule,
+        MatListModule,
+        MatGridListModule,
+        MatCardModule,
+        MatMenuModule,
+        NgChartsModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        NgOptimizedImage
+    ],
   providers: [statisticResolver],
   bootstrap: [AppComponent]
 })

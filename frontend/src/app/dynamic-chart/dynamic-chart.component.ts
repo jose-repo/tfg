@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {Chart, ChartConfiguration, ChartData, ChartEvent, ChartType} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 import {StatisticService} from "../services/statistic.service";
@@ -11,7 +11,29 @@ import {Statistic} from "../model/Entities";
   styleUrls: ['./dynamic-chart.component.css']
 })
 export class DynamicChartComponent {
-  constructor(private service: StatisticService, private route: ActivatedRoute) {
+  @Input() name: string | undefined;
+  constructor(private route: ActivatedRoute) {
+    this.route.params.subscribe(routeParams => {
+      this.name = this.route.snapshot.params['id'];
+      this.barChartData = {
+        labels: this.barChartLabels,
+        datasets: [
+        {
+          data: this.getDepopulationRiskLow(), label: 'Bajo', backgroundColor: [
+            'rgb(60, 179, 113, 0.2)',
+          ],
+        },
+        {
+          data: this.getDepopulationRiskMiddle(), label: 'Medio', backgroundColor: [
+            'rgb(255, 165, 0, 0.2)',
+          ],
+        },
+        {
+          data: this.getDepopulationRiskHigh(), label: 'Alto', backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',],
+        },
+      ]}
+    });
   }
 
   public statisticData: Statistic[] = [];
@@ -26,11 +48,29 @@ export class DynamicChartComponent {
       item.federalStateDataList?.forEach(federalState =>
         // @ts-ignore
         federalState.Data.forEach(federalStateData => {
-          if (federalState.federalStatesExtensionEnum == "ANDALUCIA"
+          if (federalState.federalStatesExtensionEnum == this.name
             && federalStateData.riskLevel == 0) {
             dataArr.push(federalStateData.riskLevel + 0.2)
           }
         }));
+    }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.regionDataList?.forEach(region =>
+          {
+            // @ts-ignore
+            if (region.MetaData[0].Nombre == this.name) {
+              region?.Data?.forEach(data => {
+                if (data.riskLevel == 0) {
+                  dataArr.push(data.riskLevel + 0.2)
+                }
+              })
+            }
+          }));
+      }
     }
     return dataArr;
   }
@@ -44,11 +84,29 @@ export class DynamicChartComponent {
       item.federalStateDataList?.forEach(federalState =>
         // @ts-ignore
         federalState.Data.forEach(federalStateData => {
-          if (federalState.federalStatesExtensionEnum == "ANDALUCIA"
+          if (federalState.federalStatesExtensionEnum == this.name
             && federalStateData.riskLevel > 2) {
             dataArr.push(federalStateData.riskLevel)
           }
         }));
+    }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.regionDataList?.forEach(region =>
+          {
+            // @ts-ignore
+            if (region.MetaData[0].Nombre == this.name) {
+              region?.Data?.forEach(data => {
+                if (data.riskLevel > 2) {
+                  dataArr.push(data.riskLevel)
+                }
+              })
+            }
+          }));
+      }
     }
     return dataArr;
   }
@@ -62,11 +120,29 @@ export class DynamicChartComponent {
       item.federalStateDataList?.forEach(federalState =>
         // @ts-ignore
         federalState.Data.forEach(federalStateData => {
-          if (federalState.federalStatesExtensionEnum == "ANDALUCIA"
+          if (federalState.federalStatesExtensionEnum == this.name
             && federalStateData.riskLevel == 1) {
             dataArr.push(federalStateData.riskLevel)
           }
         }));
+    }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.regionDataList?.forEach(region =>
+          {
+            // @ts-ignore
+            if (region.MetaData[0].Nombre == this.name) {
+              region?.Data?.forEach(data => {
+                if (data.riskLevel == 1) {
+                  dataArr.push(data.riskLevel)
+                }
+              })
+            }
+          }));
+      }
     }
     return dataArr;
   }
