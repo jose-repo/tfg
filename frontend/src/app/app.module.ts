@@ -18,8 +18,6 @@ import { CardComponent } from './card/card.component';
 import { NgChartsModule } from 'ng2-charts';
 import { LineChartComponent } from './line-chart/line-chart.component';
 import { DynamicChartComponent } from './dynamic-chart/dynamic-chart.component';
-import { DoughnutChartComponent } from './doughnut-chart/doughnut-chart.component';
-import { BubbleChartCComponent } from './bubble-chart-c/bubble-chart-c.component';
 import {HttpClientModule} from "@angular/common/http";
 import {statisticResolver} from "./services/statistic.resolver";
 
@@ -31,8 +29,6 @@ import {statisticResolver} from "./services/statistic.resolver";
     CardComponent,
     LineChartComponent,
     DynamicChartComponent,
-    DoughnutChartComponent,
-    BubbleChartCComponent
   ],
   imports: [
     BrowserModule,

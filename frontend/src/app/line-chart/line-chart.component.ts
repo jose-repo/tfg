@@ -24,7 +24,6 @@ export class LineChartComponent {
     let dataArr: number[] = [];
     // @ts-ignore
       for (let item of this.statisticData) {
-        //console.log(item);
         // @ts-ignore
         item.federalStateDataList?.forEach(federalState =>
           // @ts-ignore
@@ -43,7 +42,6 @@ export class LineChartComponent {
     let dataArr: string[] = [];
     // @ts-ignore
       for (let item of this.statisticData) {
-        //console.log(item);
         // @ts-ignore
         item.federalStateDataList.forEach(federalState =>
           // @ts-ignore

@@ -1,6 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
-import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import {Component, ViewChild} from '@angular/core';
+import {Chart, ChartConfiguration, ChartData, ChartEvent, ChartType} from 'chart.js';
+import {BaseChartDirective} from 'ng2-charts';
+import {StatisticService} from "../services/statistic.service";
+import {ActivatedRoute} from "@angular/router";
+import {Statistic} from "../model/Entities";
 
 @Component({
   selector: 'app-dynamic-chart',
@@ -8,7 +11,83 @@ import { BaseChartDirective } from 'ng2-charts';
   styleUrls: ['./dynamic-chart.component.css']
 })
 export class DynamicChartComponent {
- @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+  constructor(private service: StatisticService, private route: ActivatedRoute) {
+  }
+
+  public statisticData: Statistic[] = [];
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+
+  getDepopulationRiskLow(): number[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: number[] = [];
+    // @ts-ignore
+    for (let item of this.statisticData) {
+      // @ts-ignore
+      item.federalStateDataList?.forEach(federalState =>
+        // @ts-ignore
+        federalState.Data.forEach(federalStateData => {
+          if (federalState.federalStatesExtensionEnum == "ANDALUCIA"
+            && federalStateData.riskLevel == 0) {
+            dataArr.push(federalStateData.riskLevel)
+          }
+        }));
+    }
+    return dataArr;
+  }
+
+  getDepopulationRiskHigh(): number[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: number[] = [];
+    // @ts-ignore
+    for (let item of this.statisticData) {
+      // @ts-ignore
+      item.federalStateDataList?.forEach(federalState =>
+        // @ts-ignore
+        federalState.Data.forEach(federalStateData => {
+          if (federalState.federalStatesExtensionEnum == "ANDALUCIA"
+            && federalStateData.riskLevel > 2) {
+            dataArr.push(federalStateData.riskLevel)
+          }
+        }));
+    }
+    return dataArr;
+  }
+
+  getDepopulationRiskMiddle(): number[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: number[] = [];
+    // @ts-ignore
+    for (let item of this.statisticData) {
+      // @ts-ignore
+      item.federalStateDataList?.forEach(federalState =>
+        // @ts-ignore
+        federalState.Data.forEach(federalStateData => {
+          if (federalState.federalStatesExtensionEnum == "ANDALUCIA"
+            && federalStateData.riskLevel == 1) {
+            dataArr.push(federalStateData.riskLevel)
+          }
+        }));
+    }
+    return dataArr;
+  }
+
+  getYears(): string[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: string[] = [];
+    // @ts-ignore
+    for (let item of this.statisticData) {
+      //console.log(item);
+      // @ts-ignore
+      item.federalStateDataList.forEach(federalState =>
+        // @ts-ignore
+        federalState.Data.forEach(federalStateData => {
+          if (federalState.federalStatesExtensionEnum == "ANDALUCIA") {
+            dataArr.push("" + federalStateData.Anyo + "");
+          }
+        }));
+    }
+    return dataArr;
+  }
 
   public barChartOptions: ChartConfiguration['options'] = {
     elements: {
@@ -20,46 +99,43 @@ export class DynamicChartComponent {
     scales: {
       x: {},
       y: {
-      ticks: {stepSize: 1},
+        ticks: {stepSize: 1},
         min: 0,
-        max: 5,
+        max: 4,
       },
     },
     plugins: {
-      legend: { display: true },
+      legend: {display: true},
     },
   };
-  public barChartLabels: string[] = [
-    '2006',
-    '2007',
-    '2008',
-    '2009',
-    '2010',
-    '2011',
-    '2012',
-    '2013',
-  ];
+  public barChartLabels: string[] = this.getYears();
   public barChartType: ChartType = 'bar';
 
   public barChartData: ChartData<'bar'> = {
     labels: this.barChartLabels,
     datasets: [
-      { data: [1, 1, 1, 0, 0, 0, 0, 0], label: 'Bajo', backgroundColor: [
-                                                                      'rgb(60, 179, 113, 0.2)',
-                                                                    ],},
-      { data: [0, 0, 0, 2, 2, 3, 0, 0], label: 'Medio', backgroundColor: [
-                                                                      'rgb(255, 165, 0, 0.2)',
-                                                                    ],},
-      { data: [0, 0, 0, 0, 0, 0, 4, 5], label: 'Alto', backgroundColor: [
-                                                                      'rgba(255, 99, 132, 0.2)',                                                          ],},
+      {
+        data: this.getDepopulationRiskLow(), label: 'Bajo', backgroundColor: [
+          'rgb(60, 179, 113, 0.2)',
+        ],
+      },
+      {
+        data: this.getDepopulationRiskMiddle(), label: 'Medio', backgroundColor: [
+          'rgb(255, 165, 0, 0.2)',
+        ],
+      },
+      {
+        data: this.getDepopulationRiskHigh(), label: 'Alto', backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',],
+      },
     ],
   };
 
   // events
   public chartClicked({
-    event,
-    active,
-  }: {
+                        event,
+                        active,
+                      }: {
     event?: ChartEvent;
     active?: object[];
   }): void {
@@ -67,9 +143,9 @@ export class DynamicChartComponent {
   }
 
   public chartHovered({
-    event,
-    active,
-  }: {
+                        event,
+                        active,
+                      }: {
     event?: ChartEvent;
     active?: object[];
   }): void {
