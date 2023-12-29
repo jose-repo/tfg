@@ -28,7 +28,7 @@ export class DynamicChartComponent {
         federalState.Data.forEach(federalStateData => {
           if (federalState.federalStatesExtensionEnum == "ANDALUCIA"
             && federalStateData.riskLevel == 0) {
-            dataArr.push(federalStateData.riskLevel)
+            dataArr.push(federalStateData.riskLevel + 0.2)
           }
         }));
     }
