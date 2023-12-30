@@ -1,11 +1,44 @@
 <div class="grid-container">
-  <h1 class="mat-h1">Extremadura > Badajoz</h1>
+  <h1 class="mat-h1">{{ currentAreaStr }}</h1>
+  <mat-icon class="top-right-icon" (click)="logout()">exit_to_app</mat-icon>
+  <mat-icon class="top-right-icon" style="margin-right: 40px">account_circle</mat-icon>
+  <span class="top-right-icon" style="margin-right: 75px; margin-top: 3px;">{{getCurrentUser()}}</span>
+  <div class="date-fields">
+    <mat-form-field>
+      <span>Desde</span>
+      <input matInput [matDatepicker]="dp" placeholder="Month and Year" [formControl]="dateFrom">
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp
+                      startView="multi-year" class="year" panelClass="year-picker"
+                      (yearSelected)="chosenYearHandlerFrom($event)"
+                      panelClass="Elije una fecha">
+      </mat-datepicker>
+    </mat-form-field>
+    <div class="risk-level">
+      <mat-progress-bar
+        [color]="risk > 70 ? 'warn' : risk > 40 ? 'accent' : 'primary'"
+        [value]="risk">
+      </mat-progress-bar>
+        Nivel de riesgo actual
+    </div>
+    <mat-form-field>
+      <span>Hasta</span>
+      <input matInput [matDatepicker]="dpTo" placeholder="Month and Year" [formControl]="dateTo">
+      <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
+      <mat-datepicker #dpTo
+                      startView="multi-year"
+                      (yearSelected)="chosenYearHandlerTo($event)"
+                      panelClass="Elije una fecha">
+      </mat-datepicker>
+    </mat-form-field>
+  </div>
+  <mat-date-range-picker #picker></mat-date-range-picker>
   <mat-grid-list cols="2" rowHeight="530px">
-    <mat-grid-tile  [colspan]="2" [rowspan]="1">
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-card-title>
-            Tendencia demográfica
+            Demografía en {{ currentAreaStr }}
             <mat-menu #menu="matMenu" xPosition="before">
               <button mat-menu-item>Expand</button>
               <button mat-menu-item>Remove</button>
@@ -13,15 +46,15 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <app-line-chart></app-line-chart>
+          <app-line-chart [dateFrom]="dateFrom.value" [dateTo]="dateTo.value"></app-line-chart>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <mat-grid-tile  [colspan]="2" [rowspan]="1">
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-card-title>
-            Riesgo de despoblación
+            Riesgo de despoblación en {{ currentAreaStr }}
             <mat-menu #menu="matMenu" xPosition="before">
               <button mat-menu-item>Expand</button>
               <button mat-menu-item>Remove</button>
@@ -29,73 +62,9 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <app-dynamic-chart></app-dynamic-chart>
+          <app-dynamic-chart [dateFrom]="dateFrom.value" [dateTo]="dateTo.value"></app-dynamic-chart>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <!--<mat-grid-tile  [colspan]="1" [rowspan]="1">
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            Tasa de desempleo
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <app-dynamic-chart></app-dynamic-chart>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-    <mat-grid-tile  [colspan]="1" [rowspan]="1">
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            Tasa de natalidad
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <app-dynamic-chart></app-dynamic-chart>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-    <mat-grid-tile  [colspan]="1" [rowspan]="1">
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            Edad media de la población
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <app-dynamic-chart></app-dynamic-chart>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-    <mat-grid-tile  [colspan]="1" [rowspan]="1">
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            Saldo migratorio
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <app-dynamic-chart></app-dynamic-chart>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>-->
   </mat-grid-list>
 </div>

@@ -13,6 +13,8 @@ public class FederalStateData extends PopulationData {
     }
     
     public double extension;
+    public String displayName;
     public FederalStatesExtension.FederalStatesExtensionEnum federalStatesExtensionEnum;
     public List<RegionData> regionDataList;
+    public double depopulationRiskLevel;
 }

@@ -1,25 +1,161 @@
-import { Component, ViewChild } from '@angular/core';
-import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Chart, ChartConfiguration, ChartEvent, ChartType} from 'chart.js';
+import {BaseChartDirective} from 'ng2-charts';
 
 import Annotation from 'chartjs-plugin-annotation';
+import {ActivatedRoute} from "@angular/router";
+
+import {Statistic} from "../model/entities";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-line-chart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.css']
 })
-export class LineChartComponent {
-private newLabel? = 'Despoblación';
+export class LineChartComponent implements OnChanges {
 
-  constructor() {
+  // @ts-ignore
+  private _dateFrom: Date | null;
+  // @ts-ignore
+  private _dateTo: Date | null;
+
+  @Input()
+  set dateFrom(value: Date | null) {
+    // @ts-ignore
+    this._dateFrom = new Date(value);
+  }
+
+  get dateFrom() {
+    return this._dateFrom;
+  }
+
+  @Input()
+  set dateTo(value: Date | null) {
+    // @ts-ignore
+    this._dateTo = new Date(value);
+  }
+
+  get dateTo() {
+    return this._dateTo;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['dateFrom']) {
+      this.dateFrom = changes['dateFrom'].currentValue;
+      this.changeChartValues();
+    }
+    if (changes['dateTo']) {
+      this.dateTo = changes['dateTo'].currentValue;
+      this.changeChartValues();
+    }
+  }
+
+  constructor(private route: ActivatedRoute) {
     Chart.register(Annotation);
+    this.route.params.subscribe(routeParams => {
+      this.name = this.route.snapshot.params['id'];
+      this.changeChartValues();
+    });
+  }
+
+  public name: string | undefined;
+  public statisticData: Statistic[] = [];
+  private newLabel? = 'Despoblación';
+
+  changeChartValues(): void {
+    this.chart?.update();
+    this.lineChartData = {
+      datasets: [
+        {
+          data: this.getLineChartData(),
+          label: 'Población',
+          backgroundColor: 'rgba(19,34,54,0.6)',
+          borderColor: 'rgba(148,159,177,1)',
+          pointBackgroundColor: 'rgba(148,159,177,1)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+          fill: 'origin',
+        }
+      ],
+      labels: this.getLineChartYears()
+    }
+  }
+
+  getLineChartData(): number[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: number[] = [];
+    // @ts-ignore
+    for (let item of this.statisticData) {
+      // @ts-ignore
+      item.federalStateDataList?.forEach(federalState =>
+        // @ts-ignore
+        federalState.Data.forEach(federalStateData => {
+          if (federalState.federalStatesExtensionEnum == this.name) {
+            dataArr.push(federalStateData.Valor)
+          }
+        }));
+    }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.regionDataList?.forEach(region => {
+            // @ts-ignore
+            if (region?.regionExtensionEnum == this.name) {
+              region?.Data?.forEach(data => {
+                dataArr.push(data.Valor)
+              })
+            }
+          }));
+      }
+    }
+    return dataArr;
+
+  }
+
+  getLineChartYears(): string[] {
+    this.statisticData = this.route.snapshot.data['statisticResolver'];
+    let dataArr: string[] = [];
+    // @ts-ignore
+    for (let item of this.statisticData) {
+      // @ts-ignore
+      item.federalStateDataList.forEach(federalState =>
+        // @ts-ignore
+        federalState.Data.forEach(federalStateData => {
+          // @ts-ignore
+          if (federalState.federalStatesExtensionEnum == this.name && federalStateData.Anyo >= this.dateFrom?.getFullYear() && federalStateData.Anyo <= this.dateTo?.getFullYear()) {
+            dataArr.push("" + federalStateData.Anyo + "");
+          }
+        }));
+    }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.regionDataList?.forEach(region => {
+            // @ts-ignore
+            if (region?.regionExtensionEnum == this.name) {
+              region?.Data?.forEach(data => {
+                // @ts-ignore
+                if (data.Anyo >= this.dateFrom?.getFullYear() && data.Anyo <= this.dateTo?.getFullYear()) {
+                  dataArr.push("" + data.Anyo + "");
+                }
+              })
+            }
+          }));
+      }
+    }
+    return dataArr;
   }
 
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [1100000,1100000, 1090000,1090000, 1080000, 1070000, 1070000, 1060000, 1060000],
+        data: this.getLineChartData(),
         label: 'Población',
         backgroundColor: 'rgba(19,34,54,0.6)',
         borderColor: 'rgba(148,159,177,1)',
@@ -30,7 +166,7 @@ private newLabel? = 'Despoblación';
         fill: 'origin',
       }
     ],
-    labels: ['2006', '2007', '2008', '2009', '2010', '2011', '2012'],
+    labels: this.getLineChartYears(),
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -56,7 +192,7 @@ private newLabel? = 'Despoblación';
     },
 
     plugins: {
-      legend: { display: true },
+      legend: {display: true},
       annotation: {
         annotations: [
           {
@@ -98,11 +234,10 @@ private newLabel? = 'Despoblación';
     this.chart?.update();
   }
 
-  // events
   public chartClicked({
-    event,
-    active,
-  }: {
+                        event,
+                        active,
+                      }: {
     event?: ChartEvent;
     active?: object[];
   }): void {
@@ -110,9 +245,9 @@ private newLabel? = 'Despoblación';
   }
 
   public chartHovered({
-    event,
-    active,
-  }: {
+                        event,
+                        active,
+                      }: {
     event?: ChartEvent;
     active?: object[];
   }): void {
