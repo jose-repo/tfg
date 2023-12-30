@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {Chart, ChartConfiguration, ChartData, ChartEvent, ChartType} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 import {ActivatedRoute} from "@angular/router";
@@ -9,14 +9,59 @@ import {Statistic} from "../model/entities";
   templateUrl: './dynamic-chart.component.html',
   styleUrls: ['./dynamic-chart.component.css']
 })
-export class DynamicChartComponent {
+export class DynamicChartComponent implements OnChanges {
+
+  // @ts-ignore
+  private _dateFrom: Date | null;
+  // @ts-ignore
+  private _dateTo: Date | null;
+
+  @Input()
+  set dateFrom(value: Date | null) {
+    // @ts-ignore
+    this._dateFrom = new Date(value);
+  }
+
+  get dateFrom() {
+    return this._dateFrom;
+  }
+
+  @Input()
+  set dateTo(value: Date | null) {
+    // @ts-ignore
+    this._dateTo = new Date(value);
+  }
+
+  get dateTo() {
+    return this._dateTo;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['dateFrom']) {
+      this.dateFrom = changes['dateFrom'].currentValue;
+      this.changeChartValues();
+    }
+    if (changes['dateTo']) {
+      this.dateTo = changes['dateTo'].currentValue;
+      this.changeChartValues();
+    }
+  }
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe(routeParams => {
       this.name = this.route.snapshot.params['id'];
-      this.barChartLabels = this.getYears();
-      this.barChartData = {
-        labels: this.barChartLabels,
-        datasets: [
+      this.changeChartValues();
+    });
+  }
+
+  public name: string | undefined;
+  public statisticData: Statistic[] = [];
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+
+  changeChartValues(): void {
+    this.barChartLabels = this.getYears();
+    this.barChartData = {
+      labels: this.barChartLabels,
+      datasets: [
         {
           data: this.getDepopulationRiskLow(), label: 'Bajo', backgroundColor: [
             'rgb(60, 179, 113, 0.2)',
@@ -32,12 +77,7 @@ export class DynamicChartComponent {
             'rgba(255, 99, 132, 0.2)',],
         },
       ]}
-    });
   }
-
-  public name: string | undefined;
-  public statisticData: Statistic[] = [];
-  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   getDepopulationRiskLow(): number[] {
     this.statisticData = this.route.snapshot.data['statisticResolver'];
@@ -173,7 +213,8 @@ export class DynamicChartComponent {
       item.federalStateDataList.forEach(federalState =>
         // @ts-ignore
         federalState.Data.forEach(federalStateData => {
-          if (federalState.federalStatesExtensionEnum == this.name) {
+          // @ts-ignore
+          if (federalState.federalStatesExtensionEnum == this.name && federalStateData.Anyo >= this.dateFrom?.getFullYear() && federalStateData.Anyo <= this.dateTo?.getFullYear()) {
             dataArr.push("" + federalStateData.Anyo + "");
           }
         }));
@@ -188,7 +229,10 @@ export class DynamicChartComponent {
             // @ts-ignore
             if (region?.regionExtensionEnum == this.name) {
               region?.Data?.forEach(data => {
-                dataArr.push("" + data.Anyo + "");
+                // @ts-ignore
+                if (data.Anyo >= this.dateFrom?.getFullYear() && data.Anyo <= this.dateTo?.getFullYear()) {
+                  dataArr.push("" + data.Anyo + "");
+                }
               })
             }
           }));
@@ -239,9 +283,6 @@ export class DynamicChartComponent {
     ],
   };
 
-  // events
-  @Input() dateTo!: Date | null;
-  @Input() dateFrom!: Date | null;
   public chartClicked({
                         event,
                         active,

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Repository
 public class PopulationDataRepository {
     public List<PopulationData> findPopulationByRegions() throws MalformedURLException {
-        String strRegionJson = Util.stream(new URL(Constants.STATISTIC_POPULATION_REGION_URL));
+        String strRegionJson = Util.stream(new URL(Constants.STATISTIC_POPULATION_REGION_URL), "region");
         List<PopulationData> od = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -36,7 +36,7 @@ public class PopulationDataRepository {
     }
     
     public List<PopulationData> findPopulationByFederalStates() throws MalformedURLException {
-        String strRegionJson = Util.stream(new URL(Constants.STATISTIC_POPULATION_FEDERAL_STATE));
+        String strRegionJson = Util.stream(new URL(Constants.STATISTIC_POPULATION_FEDERAL_STATE), "federalState");
         List<PopulationData> od = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
         try {

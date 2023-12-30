@@ -1,11 +1,12 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, ViewChild} from '@angular/core';
 import {Breakpoints, BreakpointObserver} from '@angular/cdk/layout';
 import {map} from 'rxjs/operators';
 import {StatisticService} from "../services/statistic.service";
 import {Statistic} from "../model/entities";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {MatDatepicker} from "@angular/material/datepicker";
 import {FormControl} from "@angular/forms";
+import {AuthenticationService} from "../services/authentication.service";
 
 @Component({
   selector: 'app-dash',
@@ -13,7 +14,11 @@ import {FormControl} from "@angular/forms";
   styleUrls: ['./dash.component.css']
 })
 export class DashComponent {
-  constructor(private route: ActivatedRoute) {
+  // @ts-ignore
+  @ViewChild('dp') datepicker: MatDatepicker<Date>;
+  // @ts-ignore
+  @ViewChild('dpTo') datepickerTo: MatDatepicker<Date>;
+  constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService, private router: Router) {
     this.route.params.subscribe(routeParams => {
       this.currentAreaID = this.route.snapshot.params['id'];
       this.currentAreaStr = this.route.snapshot.params['name'];
@@ -27,39 +32,27 @@ export class DashComponent {
   public currentAreaStr: string = this.route.snapshot.params['name'];
   public risk: number = 1;
 
-  dateFrom = new FormControl(new Date());
+  dateFrom = new FormControl(new Date(1995, 11, 12));
   serializedDateFrom = new FormControl((new Date()).toISOString());
-  dateTo = new FormControl(new Date());
+  dateTo = new FormControl(new Date(2024, 11, 12));
   serializedDateTo = new FormControl((new Date()).toISOString());
 
   chosenYearHandlerFrom(normalizedYear: Date) {
+    this.dateFrom = new FormControl(new Date(1995, 11, 12));
     const ctrlValue = this.dateFrom.value;
     // @ts-ignore
     ctrlValue.setFullYear(normalizedYear.getFullYear());
     this.dateFrom.setValue(ctrlValue);
-  }
-
-  chosenMonthHandlerFrom(normalizedMonth: Date, datepicker: MatDatepicker<Date>) {
-    const ctrlValue = this.dateFrom.value;
-    // @ts-ignore
-    ctrlValue.setMonth(normalizedMonth.getMonth());
-    this.dateFrom.setValue(ctrlValue);
-    datepicker.close();
+    this.datepicker.close();
   }
 
   chosenYearHandlerTo(normalizedYear: Date) {
+    this.dateTo = new FormControl(new Date(2024, 11, 12));
     const ctrlValue = this.dateTo.value;
     // @ts-ignore
     ctrlValue.setFullYear(normalizedYear.getFullYear());
     this.dateTo.setValue(ctrlValue);
-  }
-
-  chosenMonthHandlerTo(normalizedMonth: Date, datepicker: MatDatepicker<Date>) {
-    const ctrlValue = this.dateTo.value;
-    // @ts-ignore
-    ctrlValue.setMonth(normalizedMonth.getMonth());
-    this.dateTo.setValue(ctrlValue);
-    datepicker.close();
+    this.datepickerTo.close();
   }
 
   getRisk() {
@@ -85,6 +78,17 @@ export class DashComponent {
     }
   }
 
+  logout() {
+    this.router.navigate(['/dashboard']);
+    this.authenticationService.logout();
+  }
+
+  getCurrentUser() {
+    let currentUser = localStorage.getItem("currentUser")
+    // @ts-ignore
+    return JSON.parse(currentUser).name;
+  }
+
   private breakpointObserver = inject(BreakpointObserver);
   /** Based on the screen size, switch from standard to one column per row */
   cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
@@ -106,4 +110,6 @@ export class DashComponent {
       ];
     })
   );
+  protected readonly localStorage = localStorage;
+  protected readonly JSON = JSON;
 }

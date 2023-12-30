@@ -1,5 +1,8 @@
 <div class="grid-container">
   <h1 class="mat-h1">{{ currentAreaStr }}</h1>
+  <mat-icon class="top-right-icon" (click)="logout()">exit_to_app</mat-icon>
+  <mat-icon class="top-right-icon" style="margin-right: 40px">account_circle</mat-icon>
+  <span class="top-right-icon" style="margin-right: 75px; margin-top: 3px;">{{getCurrentUser()}}</span>
   <div class="date-fields">
     <mat-form-field>
       <span>Desde</span>
@@ -8,7 +11,6 @@
       <mat-datepicker #dp
                       startView="multi-year" class="year" panelClass="year-picker"
                       (yearSelected)="chosenYearHandlerFrom($event)"
-                      (monthSelected)="chosenMonthHandlerFrom($event, dp)"
                       panelClass="Elije una fecha">
       </mat-datepicker>
     </mat-form-field>
@@ -21,12 +23,11 @@
     </div>
     <mat-form-field>
       <span>Hasta</span>
-      <input matInput [matDatepicker]="dp" placeholder="Month and Year" [formControl]="dateTo">
-      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-      <mat-datepicker #dp
+      <input matInput [matDatepicker]="dpTo" placeholder="Month and Year" [formControl]="dateTo">
+      <mat-datepicker-toggle matSuffix [for]="dpTo"></mat-datepicker-toggle>
+      <mat-datepicker #dpTo
                       startView="multi-year"
                       (yearSelected)="chosenYearHandlerTo($event)"
-                      (monthSelected)="chosenMonthHandlerTo($event, dp)"
                       panelClass="Elije una fecha">
       </mat-datepicker>
     </mat-form-field>
@@ -45,7 +46,7 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <app-line-chart [dateFrom]="dateFrom.defaultValue" [dateTo]="dateTo.defaultValue"></app-line-chart>
+          <app-line-chart [dateFrom]="dateFrom.value" [dateTo]="dateTo.value"></app-line-chart>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
@@ -61,7 +62,7 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <app-dynamic-chart [dateFrom]="dateFrom.defaultValue" [dateTo]="dateTo.defaultValue"></app-dynamic-chart>
+          <app-dynamic-chart [dateFrom]="dateFrom.value" [dateTo]="dateTo.value"></app-dynamic-chart>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

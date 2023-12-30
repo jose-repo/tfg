@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {Chart, ChartConfiguration, ChartEvent, ChartType} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 
@@ -6,71 +6,109 @@ import Annotation from 'chartjs-plugin-annotation';
 import {ActivatedRoute} from "@angular/router";
 
 import {Statistic} from "../model/entities";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-line-chart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.css']
 })
-export class LineChartComponent {
+export class LineChartComponent implements OnChanges {
+
+  // @ts-ignore
+  private _dateFrom: Date | null;
+  // @ts-ignore
+  private _dateTo: Date | null;
+
+  @Input()
+  set dateFrom(value: Date | null) {
+    // @ts-ignore
+    this._dateFrom = new Date(value);
+  }
+
+  get dateFrom() {
+    return this._dateFrom;
+  }
+
+  @Input()
+  set dateTo(value: Date | null) {
+    // @ts-ignore
+    this._dateTo = new Date(value);
+  }
+
+  get dateTo() {
+    return this._dateTo;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['dateFrom']) {
+      this.dateFrom = changes['dateFrom'].currentValue;
+      this.changeChartValues();
+    }
+    if (changes['dateTo']) {
+      this.dateTo = changes['dateTo'].currentValue;
+      this.changeChartValues();
+    }
+  }
+
   constructor(private route: ActivatedRoute) {
     Chart.register(Annotation);
     this.route.params.subscribe(routeParams => {
       this.name = this.route.snapshot.params['id'];
-      this.chart?.update();
-      this.lineChartData = {
-        datasets: [
-          {
-            data: this.getLineChartData(),
-            label: 'Población',
-            backgroundColor: 'rgba(19,34,54,0.6)',
-            borderColor: 'rgba(148,159,177,1)',
-            pointBackgroundColor: 'rgba(148,159,177,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(148,159,177,0.8)',
-            fill: 'origin',
-          }
-        ],
-        labels: this.getLineChartYears()
-      }
+      this.changeChartValues();
     });
   }
+
   public name: string | undefined;
-  public statisticData: Statistic[] =[] ;
+  public statisticData: Statistic[] = [];
   private newLabel? = 'Despoblación';
+
+  changeChartValues(): void {
+    this.chart?.update();
+    this.lineChartData = {
+      datasets: [
+        {
+          data: this.getLineChartData(),
+          label: 'Población',
+          backgroundColor: 'rgba(19,34,54,0.6)',
+          borderColor: 'rgba(148,159,177,1)',
+          pointBackgroundColor: 'rgba(148,159,177,1)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+          fill: 'origin',
+        }
+      ],
+      labels: this.getLineChartYears()
+    }
+  }
 
   getLineChartData(): number[] {
     this.statisticData = this.route.snapshot.data['statisticResolver'];
     let dataArr: number[] = [];
     // @ts-ignore
-      for (let item of this.statisticData) {
+    for (let item of this.statisticData) {
+      // @ts-ignore
+      item.federalStateDataList?.forEach(federalState =>
         // @ts-ignore
-        item.federalStateDataList?.forEach(federalState =>
-          // @ts-ignore
-          federalState.Data.forEach(federalStateData => {
-            if (federalState.federalStatesExtensionEnum == this.name) {
-              dataArr.push(federalStateData.Valor)
-              console.log(this.dateFrom)
-              console.log(this.dateTo)
-            }
-          }));
-      }
+        federalState.Data.forEach(federalStateData => {
+          if (federalState.federalStatesExtensionEnum == this.name) {
+            dataArr.push(federalStateData.Valor)
+          }
+        }));
+    }
     if (dataArr.length == 0) {
       for (let item of this.statisticData) {
         // @ts-ignore
         item.federalStateDataList?.forEach(federalState =>
           // @ts-ignore
-            federalState.regionDataList?.forEach(region =>
-            {
-              // @ts-ignore
-              if (region?.regionExtensionEnum == this.name) {
-                region?.Data?.forEach(data => {
-                  dataArr.push(data.Valor)
-                  console.log(this.dateFrom)
-                  console.log(this.dateTo)
-                })
-              }
+          federalState.regionDataList?.forEach(region => {
+            // @ts-ignore
+            if (region?.regionExtensionEnum == this.name) {
+              region?.Data?.forEach(data => {
+                dataArr.push(data.Valor)
+              })
+            }
           }));
       }
     }
@@ -82,27 +120,30 @@ export class LineChartComponent {
     this.statisticData = this.route.snapshot.data['statisticResolver'];
     let dataArr: string[] = [];
     // @ts-ignore
-      for (let item of this.statisticData) {
+    for (let item of this.statisticData) {
+      // @ts-ignore
+      item.federalStateDataList.forEach(federalState =>
         // @ts-ignore
-        item.federalStateDataList.forEach(federalState =>
+        federalState.Data.forEach(federalStateData => {
           // @ts-ignore
-          federalState.Data.forEach(federalStateData => {
-            if (federalState.federalStatesExtensionEnum == this.name) {
-              dataArr.push("" + federalStateData.Anyo + "");
-            }
-          }));
-      }
+          if (federalState.federalStatesExtensionEnum == this.name && federalStateData.Anyo >= this.dateFrom?.getFullYear() && federalStateData.Anyo <= this.dateTo?.getFullYear()) {
+            dataArr.push("" + federalStateData.Anyo + "");
+          }
+        }));
+    }
     if (dataArr.length == 0) {
       for (let item of this.statisticData) {
         // @ts-ignore
         item.federalStateDataList?.forEach(federalState =>
           // @ts-ignore
-          federalState.regionDataList?.forEach(region =>
-          {
+          federalState.regionDataList?.forEach(region => {
             // @ts-ignore
             if (region?.regionExtensionEnum == this.name) {
               region?.Data?.forEach(data => {
-                dataArr.push("" + data.Anyo + "");
+                // @ts-ignore
+                if (data.Anyo >= this.dateFrom?.getFullYear() && data.Anyo <= this.dateTo?.getFullYear()) {
+                  dataArr.push("" + data.Anyo + "");
+                }
               })
             }
           }));
@@ -193,9 +234,6 @@ export class LineChartComponent {
     this.chart?.update();
   }
 
-  // events
-  @Input() dateFrom!: Date | null;
-  @Input() dateTo!: Date | null;
   public chartClicked({
                         event,
                         active,

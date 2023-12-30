@@ -58,12 +58,12 @@ export class LoginComponent implements OnInit{
       .pipe(first())
       .subscribe(
         data => {
-          this.router.navigate([this.returnUrl]);
+          this.router.navigate(["/dashboard/Almería/ALMERIA"]);
         },
         error => {
           // this.alertService.error(error);
           // this.loading = false;
-          this.router.navigate(["/dashboard"]);
+          //this.router.navigate(["/dashboard/Almería/ALMERIA"]);
         });
   }
 }

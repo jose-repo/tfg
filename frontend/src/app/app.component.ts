@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {User} from "./model/user";
 import {Router} from "@angular/router";
 import {AuthenticationService} from "./services/authentication.service";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,10 @@ export class AppComponent {
 
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private titleService: Title
   ) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-  }
-
-  logout() {
-    this.authenticationService.logout();
-    this.router.navigate(['/login']);
+    this.titleService.setTitle("Análisis Demográfico");
   }
 }
