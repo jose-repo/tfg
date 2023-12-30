@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * The PopulationService class is responsible for processing population data
- * and generating statistics.
+ * The PopulationService class is responsible for processing population data and generating
+ * statistics.
  */
 @Service
 public class PopulationService {
@@ -23,8 +23,7 @@ public class PopulationService {
   @Autowired private PopulationDataFactory<RegionData> regionFactory;
   @Autowired private PopulationDataRepository populationDataRepository;
 
-  public List<StatisticData> populationDataProcessor(Integer yearFrom, Integer yearTo)
-      throws MalformedURLException {
+  public List<StatisticData> populationDataProcessor() throws MalformedURLException {
     List<PopulationData> populationDataList =
         populationDataRepository.findPopulationByFederalStates();
     List<PopulationData> populationRegionDataList =
@@ -36,7 +35,7 @@ public class PopulationService {
           federalStateData.setRegionDataList(
               convertToRegionData(federalStateData, populationRegionDataList));
         });
-    
+
     return List.of(StatisticData.builder().federalStateDataList(federalStateDataList).build());
   }
 
@@ -56,10 +55,11 @@ public class PopulationService {
   }
 
   /**
-   * Converts the given list of PopulationData into a list of RegionData based on the specified FederalStateData.
+   * Converts the given list of PopulationData into a list of RegionData based on the specified
+   * FederalStateData.
    *
-   * @param federalStateData           The FederalStateData used to filter the PopulationData.
-   * @param populationRegionDataList   The list of PopulationData to convert.
+   * @param federalStateData The FederalStateData used to filter the PopulationData.
+   * @param populationRegionDataList The list of PopulationData to convert.
    * @return The list of RegionData converted from the PopulationData.
    */
   private List<RegionData> convertToRegionData(
@@ -72,18 +72,19 @@ public class PopulationService {
                         && regionExtensionEnum.codeFederalState.equals(
                             federalStateData.metaData.get(0).getCodigo()))
             .toList();
-    List<RegionData> regionDataResult = populationRegionDataList.stream()
-        .filter(populationData -> !"00".equals(populationData.metaData.get(0).getCodigo()))
-        .filter(populationData -> "Total".equals(populationData.metaData.get(1).getNombre()))
-        .filter(
-            populationData ->
-                regionsToFind.stream()
-                    .anyMatch(
-                        regionExtensionEnum ->
-                            regionExtensionEnum.code.equals(
-                                populationData.metaData.get(0).getCodigo())))
-        .map(regionFactory::createData)
-        .collect(Collectors.toList());
+    List<RegionData> regionDataResult =
+        populationRegionDataList.stream()
+            .filter(populationData -> !"00".equals(populationData.metaData.get(0).getCodigo()))
+            .filter(populationData -> "Total".equals(populationData.metaData.get(1).getNombre()))
+            .filter(
+                populationData ->
+                    regionsToFind.stream()
+                        .anyMatch(
+                            regionExtensionEnum ->
+                                regionExtensionEnum.code.equals(
+                                    populationData.metaData.get(0).getCodigo())))
+            .map(regionFactory::createData)
+            .collect(Collectors.toList());
     regionDataResult.forEach(this::calculateDepopulationValue);
     return regionDataResult;
   }
@@ -91,16 +92,19 @@ public class PopulationService {
   /**
    * Calculates the depopulation value for each data in the given FederalStateData.
    *
-   * @param federalStateData The FederalStateData containing the data to calculate the depopulation value for.
+   * @param federalStateData The FederalStateData containing the data to calculate the depopulation
+   *     value for.
    */
   private void calculateDepopulationValue(FederalStateData federalStateData) {
-    federalStateData.getData()
-              .forEach(
-                  data -> {
-                    double depopulationValue = data.getValor() / federalStateData.getExtension();
-                    data.setPopulationDensity(depopulationValue);
-                    calculateRiskIndex(data, depopulationValue);
-                  });
+    federalStateData
+        .getData()
+        .forEach(
+            data -> {
+              double depopulationValue = data.getValor() / federalStateData.getExtension();
+              data.setPopulationDensity(depopulationValue);
+              calculateRiskIndex(data, depopulationValue);
+            });
+    federalStateData.setDepopulationRiskLevel(depopulationRiskLevelPercentage(federalStateData));
   }
 
   /**
@@ -109,13 +113,15 @@ public class PopulationService {
    * @param regionData The RegionData containing the data to calculate the depopulation value for.
    */
   private void calculateDepopulationValue(RegionData regionData) {
-    regionData.getData()
-            .forEach(
-                    data -> {
-                      double depopulationValue = data.getValor() / regionData.getExtension();
-                      data.setPopulationDensity(depopulationValue);
-                      calculateRiskIndex(data, depopulationValue);
-                    });
+    regionData
+        .getData()
+        .forEach(
+            data -> {
+              double depopulationValue = data.getValor() / regionData.getExtension();
+              data.setPopulationDensity(depopulationValue);
+              calculateRiskIndex(data, depopulationValue);
+            });
+    regionData.setDepopulationRiskLevel(depopulationRiskLevelPercentage(regionData));
   }
 
   /**
@@ -127,13 +133,28 @@ public class PopulationService {
   private void calculateRiskIndex(Data data, double depopulationValue) {
     if (depopulationValue < 12.5) {
       data.setRiskLevel(RiskLevel.RiskLevelEnum.EXTREM.level);
-    } else if (depopulationValue < 17) {
+    } else if (depopulationValue < 18) {
       data.setRiskLevel(RiskLevel.RiskLevelEnum.HIGH.level);
-    } else if (depopulationValue < 22) {
+    } else if (depopulationValue < 30) {
       data.setRiskLevel(RiskLevel.RiskLevelEnum.MIDDLE.level);
     } else {
       data.setRiskLevel(RiskLevel.RiskLevelEnum.LOW.level);
     }
   }
 
+  private double depopulationRiskLevelPercentage(@NotNull FederalStateData federalStateData) {
+    return federalStateData.getData().stream().map(Data::getRiskLevel).toList().stream()
+        .mapToInt(Integer::intValue)
+        .skip(18)
+        .average()
+        .orElse(Double.NaN);
+  }
+
+  private double depopulationRiskLevelPercentage(@NotNull RegionData regionData) {
+    return regionData.getData().stream().map(Data::getRiskLevel).toList().stream()
+        .mapToInt(Integer::intValue)
+        .skip(18)
+        .average()
+        .orElse(Double.NaN);
+  }
 }

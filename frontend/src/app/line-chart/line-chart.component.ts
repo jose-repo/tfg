@@ -3,10 +3,9 @@ import {Chart, ChartConfiguration, ChartEvent, ChartType} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 
 import Annotation from 'chartjs-plugin-annotation';
-import {Statistic} from "../model/Entities";
 import {ActivatedRoute} from "@angular/router";
-import _default from "chart.js/dist/core/core.interaction";
-import dataset = _default.modes.dataset;
+
+import {Statistic} from "../model/entities";
 
 @Component({
   selector: 'app-line-chart',
@@ -37,9 +36,9 @@ export class LineChartComponent {
       }
     });
   }
+  public name: string | undefined;
   public statisticData: Statistic[] =[] ;
   private newLabel? = 'Despoblación';
-  public name: string | undefined;
 
   getLineChartData(): number[] {
     this.statisticData = this.route.snapshot.data['statisticResolver'];
@@ -52,6 +51,8 @@ export class LineChartComponent {
           federalState.Data.forEach(federalStateData => {
             if (federalState.federalStatesExtensionEnum == this.name) {
               dataArr.push(federalStateData.Valor)
+              console.log(this.dateFrom)
+              console.log(this.dateTo)
             }
           }));
       }
@@ -63,9 +64,11 @@ export class LineChartComponent {
             federalState.regionDataList?.forEach(region =>
             {
               // @ts-ignore
-              if (region.MetaData[0].Nombre == this.name) {
+              if (region?.regionExtensionEnum == this.name) {
                 region?.Data?.forEach(data => {
                   dataArr.push(data.Valor)
+                  console.log(this.dateFrom)
+                  console.log(this.dateTo)
                 })
               }
           }));
@@ -84,11 +87,27 @@ export class LineChartComponent {
         item.federalStateDataList.forEach(federalState =>
           // @ts-ignore
           federalState.Data.forEach(federalStateData => {
-            if (federalState.federalStatesExtensionEnum == "ANDALUCIA") {
+            if (federalState.federalStatesExtensionEnum == this.name) {
               dataArr.push("" + federalStateData.Anyo + "");
             }
           }));
       }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.regionDataList?.forEach(region =>
+          {
+            // @ts-ignore
+            if (region?.regionExtensionEnum == this.name) {
+              region?.Data?.forEach(data => {
+                dataArr.push("" + data.Anyo + "");
+              })
+            }
+          }));
+      }
+    }
     return dataArr;
   }
 
@@ -175,6 +194,8 @@ export class LineChartComponent {
   }
 
   // events
+  @Input() dateFrom!: Date | null;
+  @Input() dateTo!: Date | null;
   public chartClicked({
                         event,
                         active,

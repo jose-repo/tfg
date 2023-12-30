@@ -24,3 +24,14 @@
 h1, .mat-mdc-card-title {
     color: #132236;
 }
+.example-month-picker .mat-calendar-body-cell-content {
+  pointer-events: none;
+}
+
+.example-month-picker .mat-calendar-body-label {
+  display: none;
+}
+.date-fields {
+  display: flex;
+  justify-content: space-between;
+}

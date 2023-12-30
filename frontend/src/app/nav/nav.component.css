@@ -48,3 +48,13 @@ div.grid-container > h1 {
 span.mdc-list-item__content {
     padding: 10px;
 }
+
+a {
+  color: white;
+  margin-left: 10px;
+  text-decoration: none;
+}
+
+.nav-item-r {
+  padding-left:34px;
+}

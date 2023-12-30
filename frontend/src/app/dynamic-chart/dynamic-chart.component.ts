@@ -1,9 +1,8 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {Chart, ChartConfiguration, ChartData, ChartEvent, ChartType} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
-import {StatisticService} from "../services/statistic.service";
 import {ActivatedRoute} from "@angular/router";
-import {Statistic} from "../model/Entities";
+import {Statistic} from "../model/entities";
 
 @Component({
   selector: 'app-dynamic-chart',
@@ -11,10 +10,10 @@ import {Statistic} from "../model/Entities";
   styleUrls: ['./dynamic-chart.component.css']
 })
 export class DynamicChartComponent {
-  @Input() name: string | undefined;
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe(routeParams => {
       this.name = this.route.snapshot.params['id'];
+      this.barChartLabels = this.getYears();
       this.barChartData = {
         labels: this.barChartLabels,
         datasets: [
@@ -36,6 +35,7 @@ export class DynamicChartComponent {
     });
   }
 
+  public name: string | undefined;
   public statisticData: Statistic[] = [];
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
@@ -50,7 +50,12 @@ export class DynamicChartComponent {
         federalState.Data.forEach(federalStateData => {
           if (federalState.federalStatesExtensionEnum == this.name
             && federalStateData.riskLevel == 0) {
-            dataArr.push(federalStateData.riskLevel + 0.2)
+            dataArr.push(federalStateData.riskLevel + 0.1)
+          } else if (federalState.federalStatesExtensionEnum == this.name
+            && federalStateData.riskLevel == 1) {
+            dataArr.push(federalStateData.riskLevel)
+          } else if (federalState.federalStatesExtensionEnum == this.name) {
+            dataArr.push(0)
           }
         }));
     }
@@ -62,10 +67,14 @@ export class DynamicChartComponent {
           federalState.regionDataList?.forEach(region =>
           {
             // @ts-ignore
-            if (region.MetaData[0].Nombre == this.name) {
+            if (region?.regionExtensionEnum == this.name) {
               region?.Data?.forEach(data => {
                 if (data.riskLevel == 0) {
-                  dataArr.push(data.riskLevel + 0.2)
+                  dataArr.push(data.riskLevel + 0.1)
+                } else if (data.riskLevel == 1) {
+                  dataArr.push(data.riskLevel)
+                } else {
+                  dataArr.push(0)
                 }
               })
             }
@@ -87,6 +96,8 @@ export class DynamicChartComponent {
           if (federalState.federalStatesExtensionEnum == this.name
             && federalStateData.riskLevel > 2) {
             dataArr.push(federalStateData.riskLevel)
+          } else if (federalState.federalStatesExtensionEnum == this.name) {
+            dataArr.push(0)
           }
         }));
     }
@@ -98,10 +109,12 @@ export class DynamicChartComponent {
           federalState.regionDataList?.forEach(region =>
           {
             // @ts-ignore
-            if (region.MetaData[0].Nombre == this.name) {
+            if (region?.regionExtensionEnum == this.name) {
               region?.Data?.forEach(data => {
                 if (data.riskLevel > 2) {
                   dataArr.push(data.riskLevel)
+                } else {
+                  dataArr.push(0)
                 }
               })
             }
@@ -121,8 +134,10 @@ export class DynamicChartComponent {
         // @ts-ignore
         federalState.Data.forEach(federalStateData => {
           if (federalState.federalStatesExtensionEnum == this.name
-            && federalStateData.riskLevel == 1) {
+            && (federalStateData.riskLevel == 2)) {
             dataArr.push(federalStateData.riskLevel)
+          } else if (federalState.federalStatesExtensionEnum == this.name) {
+            dataArr.push(0)
           }
         }));
     }
@@ -134,10 +149,12 @@ export class DynamicChartComponent {
           federalState.regionDataList?.forEach(region =>
           {
             // @ts-ignore
-            if (region.MetaData[0].Nombre == this.name) {
+            if (region?.regionExtensionEnum == this.name) {
               region?.Data?.forEach(data => {
-                if (data.riskLevel == 1) {
+                if (data.riskLevel == 2) {
                   dataArr.push(data.riskLevel)
+                } else {
+                  dataArr.push(0);
                 }
               })
             }
@@ -152,15 +169,30 @@ export class DynamicChartComponent {
     let dataArr: string[] = [];
     // @ts-ignore
     for (let item of this.statisticData) {
-      //console.log(item);
       // @ts-ignore
       item.federalStateDataList.forEach(federalState =>
         // @ts-ignore
         federalState.Data.forEach(federalStateData => {
-          if (federalState.federalStatesExtensionEnum == "ANDALUCIA") {
+          if (federalState.federalStatesExtensionEnum == this.name) {
             dataArr.push("" + federalStateData.Anyo + "");
           }
         }));
+    }
+    if (dataArr.length == 0) {
+      for (let item of this.statisticData) {
+        // @ts-ignore
+        item.federalStateDataList?.forEach(federalState =>
+          // @ts-ignore
+          federalState.regionDataList?.forEach(region =>
+          {
+            // @ts-ignore
+            if (region?.regionExtensionEnum == this.name) {
+              region?.Data?.forEach(data => {
+                dataArr.push("" + data.Anyo + "");
+              })
+            }
+          }));
+      }
     }
     return dataArr;
   }
@@ -177,7 +209,7 @@ export class DynamicChartComponent {
       y: {
         ticks: {stepSize: 1},
         min: 0,
-        max: 4,
+        max: 3,
       },
     },
     plugins: {
@@ -208,6 +240,8 @@ export class DynamicChartComponent {
   };
 
   // events
+  @Input() dateTo!: Date | null;
+  @Input() dateFrom!: Date | null;
   public chartClicked({
                         event,
                         active,

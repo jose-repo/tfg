@@ -13,5 +13,7 @@ public class RegionData extends PopulationData {
   }
 
   public double extension;
+  public String displayName;
   public RegionExtension.RegionExtensionEnum regionExtensionEnum;
+  public double depopulationRiskLevel;
 }

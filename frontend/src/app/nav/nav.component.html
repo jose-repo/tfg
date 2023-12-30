@@ -6,11 +6,11 @@
     <mat-toolbar>Menu</mat-toolbar>
     <div *ngFor="let item of getFederalStates()">
     <mat-nav-list>
-      <img style="padding: 13px 0px 0px 10px;margin: -4px;" class='live_trash' src="{{getFlagImg(item)}}" alt='${item}'/>
-      <a [routerLink]="['/dashboard', item]">{{item | titlecase}}</a>
+      <img style="padding: 13px 0px 0px 10px;margin: -4px;" class='live_trash' src="{{getFlagImg(item.federalStatesExtensionEnum)}}" alt='${item}'/>
+      <a [routerLink]="['/dashboard', item.displayName, item.federalStatesExtensionEnum]">{{item.displayName | titlecase}}</a>
       <!--<mat-nav-list *ngFor="let item of municipios">-->
-      <mat-nav-list *ngFor="let itemR of getRegion(item)">
-        <a [routerLink]="['/dashboard', itemR]">{{itemR | titlecase}}</a>
+      <mat-nav-list *ngFor="let itemR of getRegion(item.federalStatesExtensionEnum)">
+        <a [routerLink]="['/dashboard', itemR.displayName, itemR.regionExtensionEnum]" class="nav-item-r">{{itemR.displayName | titlecase}}</a>
       </mat-nav-list>
     </mat-nav-list>
     </div>

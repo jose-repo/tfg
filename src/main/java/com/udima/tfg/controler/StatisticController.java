@@ -33,7 +33,7 @@ public class StatisticController {
 
   @GetMapping("/population-statistic")
   public ResponseEntity<List<StatisticData>> findPopulationByRegions() throws MalformedURLException {
-    return ResponseEntity.ok(populationService.populationDataProcessor(null, null));
+    return ResponseEntity.ok(populationService.populationDataProcessor());
   }
 
   @GetMapping("/available-federal-states")

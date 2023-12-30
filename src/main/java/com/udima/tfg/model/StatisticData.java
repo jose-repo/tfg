@@ -11,6 +11,4 @@ import lombok.Setter;
 @Builder
 public class StatisticData {
     public List<FederalStateData> federalStateDataList;
-
-    public RiskLevel.RiskLevelEnum depopulationRiskLevel;
 }

@@ -1,6 +1,5 @@
 export interface Statistic {
   federalStateDataList?: (FederalStateDataListEntity)[] | null;
-  depopulationRiskLevel?: null;
 }
 export interface FederalStateDataListEntity {
   COD: string;
@@ -11,7 +10,9 @@ export interface FederalStateDataListEntity {
   Data?: (DataEntity)[] | null;
   extension: number;
   federalStatesExtensionEnum: string;
+  displayName: string;
   regionDataList?: (RegionDataListEntity | null)[] | null;
+  depopulationRiskLevel: number;
 }
 export interface MetaDataEntity {
   Id: number;
@@ -42,4 +43,6 @@ export interface RegionDataListEntity {
   Data?: (DataEntity)[] | null;
   extension: number;
   regionExtensionEnum: string;
+  displayName: string;
+  depopulationRiskLevel: number;
 }

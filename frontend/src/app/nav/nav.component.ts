@@ -4,7 +4,7 @@ import {generate, Observable} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
 import {StatisticService} from "../services/statistic.service";
 import {ActivatedRoute} from "@angular/router";
-import {Statistic} from "../model/Entities";
+import {FederalStateDataListEntity, RegionDataListEntity, Statistic} from "../model/entities";
 import { Router } from '@angular/router';
 
 @Component({
@@ -27,17 +27,17 @@ export class NavComponent {
    *
    * @returns {string[]} An array of strings representing the federal states.
    */
-  getFederalStates(): string[] {
+  getFederalStates(): FederalStateDataListEntity[] {
     if (this.statisticData.length == 0) {
       this.service.findAll().subscribe(
         value => this.statisticData = value
       );
     }
-    let dataArr: string[] = [];
+    let dataArr: FederalStateDataListEntity[] = [];
     for (let item of this.statisticData) {
       item.federalStateDataList?.forEach(federalState =>
         // @ts-ignore
-        dataArr.push(federalState.federalStatesExtensionEnum));
+        dataArr.push(federalState));
     }
     return dataArr;
   }
@@ -61,20 +61,20 @@ export class NavComponent {
     return img;
   }
 
-  getRegion(federalStateMenu: string): string[] {
+  getRegion(federalStateMenu: string): RegionDataListEntity[] {
     if (this.statisticData.length == 0) {
       this.service.findAll().subscribe(
         value => this.statisticData = value
       );
     }
-    let dataArr: string[] = [];
+    let dataArr: RegionDataListEntity[] = [];
     for (let item of this.statisticData) {
       item.federalStateDataList?.forEach(federalState => {
         // @ts-ignore
         if (federalStateMenu == federalState.federalStatesExtensionEnum) {
           federalState.regionDataList?.forEach( region => {
             // @ts-ignore
-            dataArr.push(region.MetaData[0].Nombre);
+            dataArr.push(region);
           })
         }
       });
@@ -83,8 +83,6 @@ export class NavComponent {
   }
 
   private breakpointObserver = inject(BreakpointObserver);
-  menuItems = this.getFederalStates();
-  municipios = ['Cáceres', 'Badajoz'];
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),
