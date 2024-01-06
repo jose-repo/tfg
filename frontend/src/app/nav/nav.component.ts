@@ -1,9 +1,8 @@
 import {Component, inject} from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {generate, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
 import {StatisticService} from "../services/statistic.service";
-import {ActivatedRoute} from "@angular/router";
 import {FederalStateDataListEntity, RegionDataListEntity, Statistic} from "../model/entities";
 import { Router } from '@angular/router';
 

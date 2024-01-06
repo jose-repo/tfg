@@ -3,7 +3,7 @@
                [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
                [mode]="(isHandset$ | async) ? 'over' : 'side'"
                [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Menu</mat-toolbar>
+    <mat-toolbar>Menú</mat-toolbar>
     <div *ngFor="let item of getFederalStates()">
     <mat-nav-list>
       <img style="padding: 13px 0px 0px 10px;margin: -4px;" class='live_trash' src="{{getFlagImg(item.federalStatesExtensionEnum)}}" alt='${item}'/>

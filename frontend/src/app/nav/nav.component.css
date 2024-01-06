@@ -58,3 +58,6 @@ a {
 .nav-item-r {
   padding-left:34px;
 }
+mat-sidenav-content {
+  overflow: hidden;
+}
