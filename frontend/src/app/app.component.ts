@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {User} from "./model/user";
 import {Router} from "@angular/router";
 import {AuthenticationService} from "./services/authentication.service";
 import {Title} from "@angular/platform-browser";
+
+
 
 @Component({
   selector: 'app-root',

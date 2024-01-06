@@ -11,6 +11,8 @@ public class RegionData extends PopulationData {
   public RegionData(PopulationData populationData) {
     super(populationData.cod, populationData.nombre, populationData.t3Unidad, populationData.t3Escala, populationData.metaData, populationData.data, populationData.getAdditionalProperties());
   }
+  public RegionData() {}
+
 
   public double extension;
   public String displayName;

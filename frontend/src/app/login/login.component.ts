@@ -61,9 +61,9 @@ export class LoginComponent implements OnInit{
           this.router.navigate(["/dashboard/Almería/ALMERIA"]);
         },
         error => {
-          // this.alertService.error(error);
-          // this.loading = false;
-          //this.router.navigate(["/dashboard/Almería/ALMERIA"]);
+           this.alertService.error(error);
+           this.loading = false;
+
         });
   }
 }

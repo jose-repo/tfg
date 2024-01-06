@@ -11,6 +11,7 @@ public class FederalStateData extends PopulationData {
     public FederalStateData(PopulationData populationData) {
         super(populationData.cod, populationData.nombre, populationData.t3Unidad, populationData.t3Escala, populationData.metaData, populationData.data, populationData.getAdditionalProperties());
     }
+    public FederalStateData() {}
     
     public double extension;
     public String displayName;
